@@ -2,7 +2,9 @@ from library_books import library_books
 from datetime import datetime, timedelta
 import toolbox as tb
 
-def print_book(book, clr=True):
+# modulation functions
+
+def MOD_print_book(book):
     print(f"id: {book["id"]}")
     print(f"title: {book["title"]}")
     print(f"author: {book["author"]}")
@@ -11,29 +13,40 @@ def print_book(book, clr=True):
     print(f"due date: {book["due_date"]}")
     print(f"checkouts: {book["checkouts"]}")
     print("--------------------------------------------")
-    if clr:
-        tb.wait()
+
+def MOD_search_library(library: list, term: str, condition: bool, *args):
+    found = False
+    extra_searches = False
+    condition_meeters = []
+    returning = False
+    for arg in args:
+        if arg == "idx":
+            returning = True
+            continue
+        extra_searches = extra_searches or arg
+    for idx, book in enumerate(library):
+        if book[term] == condition or extra_searches:
+            MOD_print_book(book)
+            found = True
+            condition_meeters.append(idx)
+    if found:
+        print("end books.")
+    else:
+        print("no books found.")
+        print("--------------------------------------------")
+    if returning:
+        return condition_meeters
 
 # -------- Level 1 --------
 # TODO: Create a function to view all books that are currently available
 # Output should include book ID, title, and author
 
 def view():
-    include = input("Include unavailable books? (y/n) ")
-    
-    print()
-    print("available books")
+    include = input("INCLUDE UNAVAILABLE BOOKS? (y/n) ")
+    print("\navailable books")
     print("--------------------------------------------")
-    
-    none = True
-    for book in library_books:
-        if book["available"] or include == "y":
-            print_book(book)
-            none = False
-    print("END BOOKS")
-    if none:
-        print("no books found.")
-        print("--------------------------------------------")
+    MOD_search_library(library_books, "available", True, include == "y")
+    tb.wait()
 
 # -------- Level 2 --------
 # TODO: Create a function to search books by author OR genre
@@ -46,19 +59,9 @@ def search():
     if search_type == "author":
         author = input("ENTER AUTHOR: ").title()
         
-        print()
-        print("matching books")
+        print("\nmatching books")
         print("--------------------------------------------")
-        
-        none = True
-        for book in library_books:
-            if book["author"] == author:
-                print_book(book)
-                none = False
-        print("END BOOKS")
-        if none:
-            print("no books found.")
-            print("--------------------------------------------")
+        MOD_search_library(library_books, "author", author)
     
     elif search_type == "genre":
         genre = input("ENTER GENRE: ").title()
@@ -66,19 +69,11 @@ def search():
         print()
         print("matching books")
         print("--------------------------------------------")
+        MOD_search_library(library_books, "genre", genre)
         
-        none = True
-        for book in library_books:
-            if book["genre"] == genre:
-                print_book(book)
-                none = False
-        print("END BOOKS")
-        if none:
-            print("no books found.")
-            print("--------------------------------------------")
-    
     else:
         print("INVALID SEARCH TYPE")
+    tb.wait()
 
 # -------- Level 3 --------
 # TODO: Create a function to checkout a book by ID
@@ -90,42 +85,68 @@ def search():
 #   - Print a message saying it's already checked out
 
 def checkout():
-    identity = input("ENTER BOOK ID: ").upper()
+    to_checkout = input("ENTER ID OF BOOK TO BE CHECKED OUT: ").upper()
     
-    none = True
-    print()
-    print("--------------------------------------------")
-    for i, book in enumerate(library_books):
-        if book["id"] == identity:
-            print_book(book, False)
-            idx = i
-            none = False
-    if none or not library_books[idx]["available"]:
-        print("no books found.")
-        print("--------------------------------------------")
-        return
+    print("\n--------------------------------------------")
     
-    correct = input("Is this your book? (y/n) ")
-    if correct != "y":
-        return
+    checkoutables = MOD_search_library(library_books, "id", to_checkout, "idx")
     
-    if library_books[idx]["available"]:
-        library_books[idx]["available"] = False
-        library_books[idx]["due_date"] = (datetime.now() + timedelta(weeks=2) ).strftime("%Y-%m-%d")
-        library_books[idx]["checkouts"] += 1
+    for loop, book in enumerate(checkoutables):
+        print()
+        correct = input("IS BOOK "+str(loop+1)+" RIGHT? (y/n) ")
+        if correct == "y":
+            if library_books[book]["available"]:
+                print(f"\nchecking out book {loop + 1}...")
+                library_books[book]["available"] = False
+                library_books[book]["due_date"] = (datetime.now() + timedelta(weeks=2) ).strftime("%Y-%m-%d")
+                library_books[book]["checkouts"] += 1
+            else:
+                print(f"\nbook {loop + 1} already checked out.")
+    tb.wait()
 
 # -------- Level 4 --------
 # TODO: Create a function to return a book by ID
 # Set its availability to True and clear the due_date
 
 def return_book():
-    pass
+    to_return = input("ENTER ID OF BOOK TO BE RETURNED: ").upper()
+    
+    print("\n--------------------------------------------")
+    
+    returnables = MOD_search_library(library_books, "id", to_return, "idx")
+    
+    for loop, book in enumerate(returnables):
+        print()
+        correct = input("IS BOOK "+str(loop+1)+" RIGHT? (y/n) ")
+        if correct == "y":
+            if library_books[book]["available"]:
+                print(f"\nbook {loop + 1} already returned.")
+            else:
+                print(f"\nreturning book {loop + 1}...")
+                library_books[book]["available"] = True
+                library_books[book]["due_date"] = None
+    tb.wait()
 
 # TODO: Create a function to list all overdue books
 # A book is overdue if its due_date is before today AND it is still checked out
 
 def list_overdue():
-    pass
+    print("\noverdue books")
+    print("--------------------------------------------")
+    found = False
+    for book in library_books:
+        if book["due_date"] < datetime.now().strftime("%Y-%m-%d"):
+            MOD_print_book(book)
+            found = True
+    if found:
+        print("end books.")
+    else:
+        print("no books found.")
+        print("--------------------------------------------")
+
+
+
+    
 
 # -------- Level 5 --------
 # TODO: Convert your data into a Book class with methods like checkout() and return_book()
@@ -145,8 +166,6 @@ def menu():
 if __name__ == "__main__":
     tb.clear()
     view()
-    tb.wait()
-    checkout()
-    tb.wait()
+    return_book()
     view()
     pass
