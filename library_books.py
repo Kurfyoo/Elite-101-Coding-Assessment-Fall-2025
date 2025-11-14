@@ -1,74 +1,30 @@
+class Book:
+    def __init__(self, id, title, author, genre, available=True, due_date=None, checkouts=0):
+        self.id = id
+        self.title = title
+        self.author = author
+        self.genre = genre
+        self.available = available
+        self.due_date = due_date
+        self.checkouts = checkouts
+
+    def print_info(self):
+        print(f"id: {self.id}")
+        print(f"title: {self.title}")
+        print(f"author: {self.author}")
+        print(f"genre: {self.genre}")
+        print(f"available: {self.available}")
+        print(f"due date: {self.due_date}")
+        print(f"checkouts: {self.checkouts}")
+        print("--------------------------------------------")
+
 library_books = [
-    {
-        "id": "B1",
-        "title": "The Lightning Thief",
-        "author": "Rick Riordan",
-        "genre": "Fantasy",
-        "available": True,
-        "due_date": None,
-        "checkouts": 2
-    },
-    {
-        "id": "B2",
-        "title": "To Kill a Mockingbird",
-        "author": "Harper Lee",
-        "genre": "Historical",
-        "available": False,
-        "due_date": "2025-11-01",
-        "checkouts": 5
-    },
-    {
-        "id": "B3",
-        "title": "The Great Gatsby",
-        "author": "F. Scott Fitzgerald",
-        "genre": "Classic",
-        "available": True,
-        "due_date": None,
-        "checkouts": 3
-    },
-    {
-        "id": "B4",
-        "title": "1984",
-        "author": "George Orwell",
-        "genre": "Dystopian",
-        "available": True,
-        "due_date": None,
-        "checkouts": 4
-    },
-    {
-        "id": "B5",
-        "title": "Pride and Prejudice",
-        "author": "Jane Austen",
-        "genre": "Romance",
-        "available": True,
-        "due_date": None,
-        "checkouts": 6
-    },
-    {
-        "id": "B6",
-        "title": "The Hobbit",
-        "author": "J.R.R. Tolkien",
-        "genre": "Fantasy",
-        "available": False,
-        "due_date": "2025-11-10",
-        "checkouts": 8
-    },
-    {
-        "id": "B7",
-        "title": "Fahrenheit 451",
-        "author": "Ray Bradbury",
-        "genre": "Science Fiction",
-        "available": True,
-        "due_date": None,
-        "checkouts": 1
-    },
-    {
-        "id": "B8",
-        "title": "The Catcher in the Rye",
-        "author": "J.D. Salinger",
-        "genre": "Coming-of-Age",
-        "available": False,
-        "due_date": "2025-11-12",
-        "checkouts": 3
-    }
+    Book("B1", "The Lightning Thief", "Rick Riordan", "Fantasy", True, None, 2),
+    Book("B2", "To Kill a Mockingbird", "Harper Lee", "Historical", False, "2025-11-01", 5),
+    Book("B3", "The Great Gatsby", "F. Scott Fitzgerald", "Classic", True, None, 3),
+    Book("B4", "1984", "George Orwell", "Dystopian", True, None, 4),
+    Book("B5", "Pride and Prejudice", "Jane Austen", "Romance", True, None, 6),
+    Book("B6", "The Hobbit", "J.R.R. Tolkien", "Fantasy", False, "2025-11-10", 8),
+    Book("B7", "Fahrenheit 451", "Ray Bradbury", "Science Fiction", True, None, 1),
+    Book("B8", "The Catcher in the Rye", "J.D. Salinger", "Coming-of-Age", False, "2025-11-12", 3)
 ]
